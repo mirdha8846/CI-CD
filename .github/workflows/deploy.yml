@@ -13,21 +13,21 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Install Dependencies for App1
+      - name: Install Dependencies for APP-1
         run: npm install
-        working-directory: app-1/CI-CD/APP-1  # Corrected path for app1
+        working-directory: app-1/CI-CD/APP-1  # Update to the correct folder name
 
-      - name: Build App1
+      - name: Build APP-1
         run: npm run build
-        working-directory: app-1/CI-CD/APP-1  # Corrected path for app1
+        working-directory: app-1/CI-CD/APP-1  # Update to the correct folder name
 
-      - name: Install Dependencies for App2
+      - name: Install Dependencies for APP-2
         run: npm install
-        working-directory: app-1/CI-CD/APP-2  # Corrected path for app2
+        working-directory: app-1/CI-CD/APP-2  # Update to the correct folder name
 
-      - name: Build App2
+      - name: Build APP-2
         run: npm run build
-        working-directory: app-1/CI-CD/APP-2  # Corrected path for app2
+        working-directory: app-1/CI-CD/APP-2  # Update to the correct folder name
 
       - name: Deploy to AWS EC2
         uses: appleboy/scp-action@v0.1.4
@@ -35,8 +35,8 @@ jobs:
           host: ${{ secrets.AWS_HOST }}
           username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
-          source: "app-1/CI-CD/"  # Corrected source path
-          target: "/home/ubuntu/app-1/CI-CD"  # Corrected target path
+          source: "app-1/CI-CD/"  # Correct source path
+          target: "/home/ubuntu/app-1/CI-CD"  # Correct target path
 
       - name: Restart Server on EC2
         uses: appleboy/ssh-action@master
@@ -46,5 +46,5 @@ jobs:
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           script: |
             cd /home/ubuntu/app-1/CI-CD
-            pm2 restart all || pm2 start npm --name "app1" -- start
-            pm2 start npm --name "app2" -- start --prefix app2
+            pm2 restart all || pm2 start npm --name "APP-1" -- start
+            pm2 start npm --name "APP-2" -- start --prefix APP-2
