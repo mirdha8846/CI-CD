@@ -15,19 +15,19 @@ jobs:
 
       - name: Install Dependencies for APP-1
         run: npm install
-        working-directory: CI-CD/APP-1  # Update to the correct folder name
+        working-directory: APP-1  # Update to the correct folder name
 
       - name: Build APP-1
         run: npm run build
-        working-directory: CI-CD/APP-1  # Update to the correct folder name
+        working-directory: APP-1  # Update to the correct folder name
 
       - name: Install Dependencies for APP-2
         run: npm install
-        working-directory: CI-CD/APP-2  # Update to the correct folder name
+        working-directory: APP-2  # Update to the correct folder name
 
       - name: Build APP-2
         run: npm run build
-        working-directory: CI-CD/APP-2  # Update to the correct folder name
+        working-directory: APP-2  # Update to the correct folder name
 
       - name: Deploy to AWS EC2
         uses: appleboy/scp-action@v0.1.4
