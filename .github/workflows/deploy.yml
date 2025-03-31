@@ -12,54 +12,39 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  
 
-      # Deploy app1
-      - name: Install Dependencies (App1)
+      - name: Install Dependencies for App1
         run: npm install
-        working-directory: ./app1
+        working-directory: app-1/CI-CD/APP-1  # Corrected path for app1
 
-      - name: Build Project (App1)
+      - name: Build App1
         run: npm run build
-        working-directory: /app-1/CI-CD/APP-1
+        working-directory: app-1/CI-CD/APP-1  # Corrected path for app1
 
-      - name: Deploy app1 to AWS EC2
+      - name: Install Dependencies for App2
+        run: npm install
+        working-directory: app-1/CI-CD/APP-2  # Corrected path for app2
+
+      - name: Build App2
+        run: npm run build
+        working-directory: app-1/CI-CD/APP-2  # Corrected path for app2
+
+      - name: Deploy to AWS EC2
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.AWS_HOST }}
-          username: ubuntu
+          username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
-          source: "./app1"
-          target: "/home/ubuntu/app-1"
+          source: "app-1/CI-CD/"  # Corrected source path
+          target: "/home/ubuntu/app-1/CI-CD"  # Corrected target path
 
-      # Deploy app2
-      - name: Install Dependencies (App2)
-        run: npm install
-        working-directory: /app-1/CI-CD/APP-2
-
-      - name: Build Project (App2)
-        run: npm run build
-        working-directory: ./app2
-
-      - name: Deploy app2 to AWS EC2
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.AWS_HOST }}
-          username: ubuntu
-          key: ${{ secrets.AWS_PRIVATE_KEY }}
-          source: "./app2"
-          target: "/home/ubuntu/app-2"
-
-      - name: Restart Both Apps on EC2
+      - name: Restart Server on EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.AWS_HOST }}
-          username: ubuntu
+          username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           script: |
-            cd /home/ubuntu/app-1
+            cd /home/ubuntu/app-1/CI-CD
             pm2 restart all || pm2 start npm --name "app1" -- start
-            
-            cd /home/ubuntu/app-2
-            pm2 restart all || pm2 start npm --name "app2" -- start
+            pm2 start npm --name "app2" -- start --prefix app2
