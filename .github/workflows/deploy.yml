@@ -1,0 +1,44 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - main  # Sirf 'main' branch me push hone par deploy karega
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Project
+        run: npm run build
+
+      - name: Deploy to AWS EC2
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.AWS_HOST }}  # EC2 ka IP
+          username: ${{ secrets.AWS_USERNAME }}  # EC2 ka username
+          key: ${{ secrets.AWS_PRIVATE_KEY }}  # SSH private key
+          source: "./"  # Local repo se file
+          target: "/home/ubuntu/app"  # EC2 server ka target directory
+
+      - name: Restart Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          script: |
+            cd /app-1/CI-CD
+            pm2 restart all || pm2 start npm --name "my-app" -- start
