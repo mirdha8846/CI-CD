@@ -35,7 +35,7 @@ jobs:
           host: ${{ secrets.AWS_HOST }}
           username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
-          source: "CI-CD/*" # Correct source path
+          source: "./" # Correct source path
           target: "/home/ubuntu/app-1/CI-CD"  # Correct target path
 
       - name: Restart Server on EC2
